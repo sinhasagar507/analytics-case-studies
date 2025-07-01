@@ -1,42 +1,40 @@
 /*
 =============================================================
-Create Database and Schemas
+Create Database and Schemas in Snowflake
 =============================================================
 Script Purpose:
-    This script creates a new database named 'DataWarehouse' after checking if it already exists. 
-    If the database exists, it is dropped and recreated. Additionally, the script sets up three schemas 
-    within the database: 'bronze', 'silver', and 'gold'.
-	
+    Recreates the 'data_warehouse' database along with three schemas:
+    'bronze', 'silver', and 'gold'. These follow the medallion architecture.
+    
 WARNING:
-    Running this script will drop the entire 'DataWarehouse' database if it exists. 
-    All data in the database will be permanently deleted. Proceed with caution 
-    and ensure you have proper backups before running this script.
+    This script uses CREATE OR REPLACE, which will drop the database if it exists.
+    All objects inside will be permanently deleted. Use with caution.
+=============================================================
 */
 
-USE master;
-GO
+-- Step 1: Use the appropriate role
+USE ROLE SYSADMIN;
 
--- Drop and recreate the 'DataWarehouse' database
-IF EXISTS (SELECT 1 FROM sys.databases WHERE name = 'DataWarehouse')
-BEGIN
-    ALTER DATABASE DataWarehouse SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
-    DROP DATABASE DataWarehouse;
-END;
-GO
+-- Step 2: Create or replace a compute warehouse
+CREATE OR REPLACE WAREHOUSE dw_wh
+  WAREHOUSE_SIZE = 'XSMALL'
+  AUTO_SUSPEND = 60
+  AUTO_RESUME = TRUE
+  INITIALLY_SUSPENDED = TRUE;
 
--- Create the 'DataWarehouse' database
-CREATE DATABASE DataWarehouse;
-GO
+-- Step 3: Create or replace the database
+CREATE OR REPLACE DATABASE data_warehouse
+  COMMENT = 'Central database for medallion architecture: bronze, silver, gold';
 
-USE DataWarehouse;
-GO
+-- Step 4: Set active database context
+USE DATABASE data_warehouse;
 
--- Create Schemas
-CREATE SCHEMA bronze;
-GO
+-- Step 5: Create schemas for medallion data flow
+CREATE OR REPLACE SCHEMA bronze
+  COMMENT = 'Bronze schema: raw ingested data';
 
-CREATE SCHEMA silver;
-GO
+CREATE OR REPLACE SCHEMA silver
+  COMMENT = 'Silver schema: cleansed and semi-transformed data';
 
-CREATE SCHEMA gold;
-GO
+CREATE OR REPLACE SCHEMA gold
+  COMMENT = 'Gold schema: final analytical tables for ad-hoc SQL queries';
