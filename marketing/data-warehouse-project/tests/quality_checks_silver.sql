@@ -49,7 +49,7 @@
 USE ROLE SYSADMIN;
 USE WAREHOUSE dw_wh;
 USE DATABASE data_warehouse;
-USE SCHEMA silver;
+
 
 -- CRM_Customer_Info table
 -- Check for nulls or duplicates in the primary key. Expectations(no results)

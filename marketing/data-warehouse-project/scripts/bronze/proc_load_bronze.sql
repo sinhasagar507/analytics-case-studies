@@ -45,7 +45,7 @@
 USE ROLE SYSADMIN;
 USE WAREHOUSE dw_wh;
 USE DATABASE data_warehouse;
-USE SCHEMA bronze;
+
 
 CREATE OR REPLACE PROCEDURE bronze.load_bronze()
 RETURNS STRING

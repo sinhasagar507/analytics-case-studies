@@ -53,6 +53,11 @@
 -- Activate your working context
 
 -- Check for nulls or duplicates in the primary key
+
+
+USE ROLE SYSADMIN;
+USE WAREHOUSE dw_wh;
+USE DATABASE data_warehouse;
 SELECT
     cst_id,
     COUNT(*)
